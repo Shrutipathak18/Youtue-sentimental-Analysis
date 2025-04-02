@@ -1,0 +1,18 @@
+Collecting tweepy
+  Downloading tweepy-4.15.0-py3-none-any.whl (99 kB)
+     ---------------------------------------- 99.4/99.4 kB 1.1 MB/s eta 0:00:00
+Collecting requests<3,>=2.27.0
+  Using cached requests-2.32.3-py3-none-any.whl (64 kB)
+Collecting requests-oauthlib<3,>=1.2.0
+  Using cached requests_oauthlib-2.0.0-py2.py3-none-any.whl (24 kB)
+Collecting oauthlib<4,>=3.2.0
+  Using cached oauthlib-3.2.2-py3-none-any.whl (151 kB)
+Collecting certifi>=2017.4.17
+  Using cached certifi-2025.1.31-py3-none-any.whl (166 kB)
+Collecting urllib3<3,>=1.21.1
+  Using cached urllib3-2.3.0-py3-none-any.whl (128 kB)
+Collecting charset-normalizer<4,>=2
+  Using cached charset_normalizer-3.4.1-cp310-cp310-win_amd64.whl (102 kB)
+Requirement already satisfied: idna<4,>=2.5 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from requests<3,>=2.27.0->tweepy) (3.10)
+Installing collected packages: urllib3, oauthlib, charset-normalizer, certifi, requests, requests-oauthlib, tweepy
+Successfully installed certifi-2025.1.31 charset-normalizer-3.4.1 oauthlib-3.2.2 requests-2.32.3 requests-oauthlib-2.0.0 tweepy-4.15.0 urllib3-2.3.0

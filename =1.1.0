@@ -1,0 +1,20 @@
+Collecting fastapi-limiter
+  Downloading fastapi_limiter-0.1.6-py3-none-any.whl (15 kB)
+Collecting redis>=4.2.0rc1
+  Downloading redis-6.0.0b1-py3-none-any.whl (261 kB)
+     ------------------------------------ 261.6/261.6 kB 894.6 kB/s eta 0:00:00
+Requirement already satisfied: fastapi in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from fastapi-limiter) (0.115.12)
+Collecting async-timeout>=4.0.3
+  Using cached async_timeout-5.0.1-py3-none-any.whl (6.2 kB)
+Requirement already satisfied: pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from fastapi->fastapi-limiter) (2.11.1)
+Requirement already satisfied: starlette<0.47.0,>=0.40.0 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from fastapi->fastapi-limiter) (0.46.1)
+Requirement already satisfied: typing-extensions>=4.8.0 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from fastapi->fastapi-limiter) (4.13.0)
+Requirement already satisfied: annotated-types>=0.6.0 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi->fastapi-limiter) (0.7.0)
+Requirement already satisfied: pydantic-core==2.33.0 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi->fastapi-limiter) (2.33.0)
+Requirement already satisfied: typing-inspection>=0.4.0 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi->fastapi-limiter) (0.4.0)
+Requirement already satisfied: anyio<5,>=3.6.2 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from starlette<0.47.0,>=0.40.0->fastapi->fastapi-limiter) (4.9.0)
+Requirement already satisfied: exceptiongroup>=1.0.2 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi->fastapi-limiter) (1.2.2)
+Requirement already satisfied: idna>=2.8 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi->fastapi-limiter) (3.10)
+Requirement already satisfied: sniffio>=1.1 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi->fastapi-limiter) (1.3.1)
+Installing collected packages: async-timeout, redis, fastapi-limiter
+Successfully installed async-timeout-5.0.1 fastapi-limiter-0.1.6 redis-6.0.0b1

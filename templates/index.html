@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Sentiment Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #FF0000;
+            --primary-dark: #CC0000;
+            --secondary: #282828;
+            --dark: #606060;
+            --light: #909090;
+            --lighter: #E0E0E0;
+            --lightest: #F9F9F9;
+            --positive: #4CAF50;
+            --negative: #F44336;
+            --neutral: #FFC107;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--lightest);
+            color: var(--secondary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: var(--dark);
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--lighter);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+        
+        .count-input {
+            width: 80px;
+            padding: 0.8rem;
+            border: 2px solid var(--lighter);
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        .search-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .search-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .video-preview {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1.5rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .video-thumbnail {
+            width: 160px;
+            height: 120px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-info h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .video-info p {
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        .results-container {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card.positive {
+            border-top: 4px solid var(--positive);
+        }
+        
+        .stat-card.negative {
+            border-top: 4px solid var(--negative);
+        }
+        
+        .stat-card.neutral {
+            border-top: 4px solid var(--neutral);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+        
+        .positive .stat-value {
+            color: var(--positive);
+        }
+        
+        .negative .stat-value {
+            color: var(--negative);
+        }
+        
+        .neutral .stat-value {
+            color: var(--neutral);
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .comments-list {
+            margin-top: 2rem;
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .comment-card {
+            border-left: 4px solid var(--lighter);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            transition: var(--transition);
+            background: white;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .comment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comment-card.positive {
+            border-left-color: var(--positive);
+            background-color: rgba(76, 175, 80, 0.05);
+        }
+        
+        .comment-card.negative {
+            border-left-color: var(--negative);
+            background-color: rgba(244, 67, 54, 0.05);
+        }
+        
+        .comment-card.neutral {
+            border-left-color: var(--neutral);
+            background-color: rgba(255, 193, 7, 0.05);
+        }
+        
+        .comment-text {
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        
+        .comment-sentiment {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+            margin-right: 0.5rem;
+        }
+        
+        .positive .comment-sentiment {
+            background-color: var(--positive);
+        }
+        
+        .negative .comment-sentiment {
+            background-color: var(--negative);
+        }
+        
+        .neutral .comment-sentiment {
+            background-color: var(--neutral);
+        }
+        
+        .polarity {
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-top: 0.75rem;
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: var(--negative);
+            text-align: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: rgba(244, 67, 54, 0.1);
+            border-radius: 8px;
+            display: none;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--dark);
+            font-size: 0.9rem;
+            padding: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .video-preview {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .video-thumbnail {
+                width: 100%;
+                height: auto;
+                max-height: 180px;
+            }
+            
+            .count-input {
+                width: 100%;
+            }
+            
+            .search-btn {
+                width: 100%;
+                padding: 0.8rem;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fab fa-youtube"></i> YouTube Sentiment Analysis</h1>
+            <p class="subtitle">Analyze public sentiment from YouTube comments in real-time</p>
+        </header>
+        
+        <div class="search-container">
+            <form class="search-form" id="searchForm">
+                <input type="text" class="search-input" id="videoId" placeholder="Enter YouTube video ID (e.g., dQw4w9WgXcQ)" required>
+                <input type="number" class="count-input" id="count" placeholder="Comments" min="1" max="100" value="20">
+                <button type="submit" class="search-btn">Analyze <i class="fas fa-chart-bar"></i></button>
+            </form>
+            <div class="error" id="error"></div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing comments...</p>
+        </div>
+        
+        <div class="results-container" id="results">
+            <div id="videoPreview" class="video-preview" style="display: none;">
+                <img id="videoThumbnail" class="video-thumbnail" src="" alt="Video thumbnail">
+                <div class="video-info">
+                    <h3 id="videoTitle">Video Title</h3>
+                    <p id="videoChannel">Channel Name</p>
+                </div>
+            </div>
+            
+            <h2>Sentiment Analysis Results</h2>
+            <p id="searchTerm" class="search-term"></p>
+            
+            <div class="stats-container">
+                <div class="stat-card positive">
+                    <h3>Positive</h3>
+                    <div class="stat-value" id="positiveCount">0</div>
+                    <p>Comments</p>
+                </div>
+                <div class="stat-card negative">
+                    <h3>Negative</h3>
+                    <div class="stat-value" id="negativeCount">0</div>
+                    <p>Comments</p>
+                </div>
+                <div class="stat-card neutral">
+                    <h3>Neutral</h3>
+                    <div class="stat-value" id="neutralCount">0</div>
+                    <p>Comments</p>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="sentimentChart"></canvas>
+            </div>
+            
+            <h3>Analyzed Comments</h3>
+            <div class="comments-list" id="commentsList"></div>
+        </div>
+        
+        <footer>
+            <p>YouTube Sentiment Analysis Tool &copy; 2023 | Powered by FastAPI and TextBlob</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Initialize chart variable
+        let sentimentChart = null;
+    
+        // Helper functions for UI state management
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('searchForm').querySelector('button').disabled = true;
+        }
+    
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('searchForm').querySelector('button').disabled = false;
+        }
+    
+        function showError(message) {
+            const errorElement = document.getElementById('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+    
+        function hideResults() {
+            document.getElementById('results').style.display = 'none';
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('searchForm');
+            const errorElement = document.getElementById('error');
+            
+            searchForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const videoId = document.getElementById('videoId').value.trim();
+                const count = parseInt(document.getElementById('count').value);
+                
+                if (!videoId) {
+                    showError('Please enter a valid YouTube video ID');
+                    return;
+                }
+    
+                try {
+                    showLoading();
+                    hideError();
+                    hideResults();
+                    
+                    // First fetch video details
+                    await fetchVideoDetails(videoId);
+                    
+                    // Then analyze comments
+                    const response = await fetchComments(videoId, count);
+                    
+                    if (!response || !response.comments) {
+                        throw new Error('No comments found or invalid response');
+                    }
+                    
+                    displayResults(response);
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    showError(error.message || 'An error occurred while processing your request');
+                } finally {
+                    hideLoading();
+                }
+            });
+        });
+    
+        async function fetchVideoDetails(videoId) {
+            try {
+                const response = await fetch(
+                    `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=AIzaSyCN4RawsvGcKLcDrpqi4B4X3y_CQHdL3aE`
+                );
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error.message || 'Failed to fetch video details');
+                }
+                
+                const data = await response.json();
+                
+                if (!data.items || data.items.length === 0) {
+                    throw new Error('Video not found');
+                }
+                
+                const video = data.items[0].snippet;
+                document.getElementById('videoTitle').textContent = video.title;
+                document.getElementById('videoChannel').textContent = video.channelTitle;
+                document.getElementById('videoThumbnail').src = video.thumbnails.medium.url;
+                document.getElementById('videoPreview').style.display = 'flex';
+                
+            } catch (error) {
+                console.error('Error fetching video details:', error);
+                document.getElementById('videoPreview').style.display = 'none';
+                throw error;
+            }
+        }
+    
+        async function fetchComments(videoId, count) {
+            try {
+                const response = await fetch('http://localhost:8000/fetch_comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        video_id: videoId,
+                        max_results: count
+                    })
+                });
+    
+                if (!response.ok) {
+                    let errorMsg = 'Failed to analyze comments';
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.detail || errorMsg;
+                    } catch (e) {
+                        errorMsg = `${response.status} ${response.statusText}`;
+                    }
+                    throw new Error(errorMsg);
+                }
+    
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching comments:', error);
+                throw new Error('Failed to connect to the analysis server');
+            }
+        }
+    
+        function displayResults(data) {
+            if (!data || !data.comments) {
+                throw new Error('Invalid data received from server');
+            }
+            
+            document.getElementById('searchTerm').textContent = 
+                `Showing results for: "${data.video_id}" (${data.count} comments analyzed)`;
+            
+            document.getElementById('positiveCount').textContent = data.positive_count;
+            document.getElementById('negativeCount').textContent = data.negative_count;
+            document.getElementById('neutralCount').textContent = data.neutral_count;
+            
+            updateChart(data.positive_count, data.negative_count, data.neutral_count);
+            
+            const commentsList = document.getElementById('commentsList');
+            commentsList.innerHTML = '';
+            
+            data.comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = `comment-card ${comment.sentiment}`;
+                
+                commentElement.innerHTML = `
+                    <p class="comment-text">${comment.text}</p>
+                    <div>
+                        <span class="comment-sentiment">${comment.sentiment}</span>
+                        <span class="polarity">Polarity: ${comment.polarity.toFixed(2)}</span>
+                    </div>
+                `;
+                
+                commentsList.appendChild(commentElement);
+            });
+            
+            document.getElementById('results').style.display = 'block';
+        }
+    
+        function updateChart(positive, negative, neutral) {
+            const ctx = document.getElementById('sentimentChart').getContext('2d');
+            
+            if (sentimentChart) {
+                sentimentChart.destroy();
+            }
+            
+            sentimentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Negative', 'Neutral'],
+                    datasets: [{
+                        data: [positive, negative, neutral],
+                        backgroundColor: ['#4CAF50', '#F44336', '#FFC107'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

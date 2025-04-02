@@ -1,0 +1,11 @@
+Collecting uvicorn
+  Using cached uvicorn-0.34.0-py3-none-any.whl (62 kB)
+Requirement already satisfied: typing-extensions>=4.0 in c:\users\kiit\downloads\lab8\venv\lib\site-packages (from uvicorn) (4.13.0)
+Collecting click>=7.0
+  Using cached click-8.1.8-py3-none-any.whl (98 kB)
+Collecting h11>=0.8
+  Using cached h11-0.14.0-py3-none-any.whl (58 kB)
+Collecting colorama
+  Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Installing collected packages: h11, colorama, click, uvicorn
+Successfully installed click-8.1.8 colorama-0.4.6 h11-0.14.0 uvicorn-0.34.0
